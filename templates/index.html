@@ -255,7 +255,7 @@
           <div class="single_sidebar">
             <h2><span>Popular Post</span></h2>
             <ul class="spost_nav">
-              {% for new in news|slice:"0:5" %}
+              {% for new in popular_news %}
               <li>
                 <div class="media wow fadeInDown"> <a href="{% url 'detail' new.pk %}" class="media-left"> <img alt="" src="{{ new.image.url }}"> </a>
                   <div class="media-body"> <a href="{% url 'detail' new.pk %}" class="catg_title">{{ new.title }}</a> </div>

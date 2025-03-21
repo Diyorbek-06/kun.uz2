@@ -18,6 +18,7 @@ def index(request):
     news_sport = News.objects.filter(category__name="Sport").order_by('-date')
     news_fan = News.objects.filter(category__name="Fan-texnika").order_by('-date')
     sponsor = Sponsor.objects.all()
+    popular_news = News.objects.all().order_by('-views')
     context = {
         'ctg': get_category(),
         'news': news,
@@ -28,6 +29,7 @@ def index(request):
         'news_fan': news_fan,
         'sponsor': sponsor,
         'date': get_date(),
+        'popular_news': popular_news[:4],
     }
     return render(request, 'index.html', context)
 
@@ -45,7 +47,7 @@ def about(request):
 def detail(request, pk):
     new = News.objects.get(pk=pk)
     news = News.objects.filter(category__name=new.category).order_by('-date')
-    popular_news = News.objects.filter(category__name=new.category).order_by('views')
+    popular_news = News.objects.filter(category__name=new.category).order_by('-views')
     sponsor = Sponsor.objects.all()
     new.views += 1
     new.save()
@@ -61,7 +63,7 @@ def detail(request, pk):
 
 def contact(request):
     news = News.objects.all().order_by('-date')
-    popular_news = News.objects.all().order_by('views')
+    popular_news = News.objects.all().order_by('-views')
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
