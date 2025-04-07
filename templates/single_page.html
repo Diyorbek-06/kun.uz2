@@ -109,6 +109,29 @@
               <p>{{ new.short_desc }}</p>
               <blockquote> {{ new.description }} </blockquote>
             </div>
+            <!-- Kommentlar Ro‘yxati -->
+            <div class="comments_section">
+                <h2>Comments <i class="fa fa-comments"></i></h2>
+                {% for comment in comments %}
+                    <div class="comment">
+                        <strong>{{ comment.user }}</strong> - <span>{{ comment.created_at }}</span>
+                        <p>{{ comment.content  }}</p>
+                    </div>
+                {% empty %}
+                    <p>No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+
+            <!-- Komment Qo‘shish Formasi -->
+            <div class="comment_form">
+                <h3>Leave a Comment</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
             <div class="social_link">
               <ul class="sociallink_nav">
                   <li><a href="https://www.facebook.com/" target="_blank"><i class="fa fa-facebook"></i></a></li>

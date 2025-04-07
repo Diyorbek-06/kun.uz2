@@ -2,7 +2,8 @@ import datetime
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Category, News, Sponsor
-from .forms import ContactForm
+from .forms import ContactForm, CommentForm
+from user.models import Comment
 
 def get_date():
     return datetime.datetime.today()
@@ -49,6 +50,16 @@ def detail(request, pk):
     news = News.objects.filter(category__name=new.category).order_by('-date')
     popular_news = News.objects.filter(category__name=new.category).order_by('-views')
     sponsor = Sponsor.objects.all()
+    comments = Comment.objects.filter(post__title=new.title).order_by('-created_at')[:3]
+    form = CommentForm(request.POST)
+    if request.POST:
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user  # To'g'ri foydalanuvchi obyekti tayinlanadi
+            comment.post = new
+            comment.save()
+            return redirect('detail', pk=new.id)
+
     new.views += 1
     new.save()
     context = {
@@ -58,6 +69,8 @@ def detail(request, pk):
         'popular_news': popular_news[:4],
         'date': get_date(),
         'sponsor': sponsor,
+        'comments': comments,
+        'form': form
     }
     return render(request, 'single_page.html', context)
 
@@ -82,7 +95,6 @@ def contact(request):
     }
     return render(request, 'contact.html', context)
 
-
 def category_detail(request, pk):
     ctg = Category.objects.get(id=pk)
     active_ctg = Category.objects.get(id=pk)
@@ -94,3 +106,12 @@ def category_detail(request, pk):
         'active_ctg': active_ctg,
     }
     return render(request, 'category.html', context)
+
+def comment_create(request):
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.user = request.user  # To'g'ri foydalanuvchi tayinlanadi
+        comment.post = News.objects.get(id=request.POST.get('post_id'))
+        comment.save()
+        return redirect('detail', pk=request.POST.get('post_id'))

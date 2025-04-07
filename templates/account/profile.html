@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Profilingiz</h2>
+    <div class="card p-3">
+        <img src="{{ user.profile.image.url }}" alt="Profil rasmi" class="img-thumbnail" width="150">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ u_form.as_p }}
+            {{ p_form.as_p }}
+            <button type="submit" class="btn btn-primary">Yangilash</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
